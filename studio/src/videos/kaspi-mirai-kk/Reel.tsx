@@ -190,26 +190,41 @@ export const Reel: React.FC = () => {
       <Caption frame={frame} />
       <Hook frame={frame} />
       <Outro frame={frame} />
-      {/* звук: щелчки касаний, набор текста, появление результата, финал */}
-      {TAPS.map((t) => (
-        <Sequence key={`s${t.at}`} from={t.at} durationInFrames={40}>
-          <Audio src={staticFile('sfx/ui-click.wav')} volume={SFX} />
+      {/* Звук. ui-click.wav, ui-pop.wav и ui-tap.wav в репозитории — цифровая тишина (−91 дБ),
+          поэтому взяты живые нарезки. Громкие идут на ×0,37 по правилу репозитория,
+          тихие в источнике (pop-warm −14 дБ, shimmer −13 дБ, ui-glass −21 дБ) — с добором до слышимости. */}
+      {TAPS.filter((t) => t.at !== T.tapPay).map((t) => (
+        <Sequence key={`s${t.at}`} from={t.at} durationInFrames={20}>
+          <Audio src={staticFile('sfx/tick-soft.wav')} volume={SFX} />
         </Sequence>
       ))}
-      <Sequence from={T.typeFrom} durationInFrames={T.typeTo - T.typeFrom}>
-        <Audio src={staticFile('sfx/typing.wav')} volume={SFX * 0.8} />
+      {/* набор текста — клавиатура */}
+      {[[T.typeFrom, T.typeTo], [T.nameFrom, T.nameTo], [T.iinFrom, T.iinTo]].map(([a, b]) => (
+        <Sequence key={`t${a}`} from={a} durationInFrames={b - a}>
+          <Audio src={staticFile('sfx/typing.wav')} volume={SFX * 0.8} loop />
+        </Sequence>
+      ))}
+      <Sequence from={T.gradeFrom} durationInFrames={20}>
+        <Audio src={staticFile('sfx/tick-soft.wav')} volume={SFX * 0.8} />
       </Sequence>
-      <Sequence from={T.nameFrom} durationInFrames={T.gradeTo - T.nameFrom}>
-        <Audio src={staticFile('sfx/typing.wav')} volume={SFX * 0.8} />
+      {/* школа нашлась */}
+      <Sequence from={T.resultAt} durationInFrames={30}>
+        <Audio src={staticFile('sfx/ui-glass.wav')} volume={1} />
       </Sequence>
-      <Sequence from={T.resultAt} durationInFrames={50}>
-        <Audio src={staticFile('sfx/ui-pop.wav')} volume={SFX} />
-      </Sequence>
+      {/* сумма подставилась */}
       <Sequence from={T.sumFlash} durationInFrames={60}>
-        <Audio src={staticFile('sfx/shimmer.wav')} volume={SFX * 0.7} />
+        <Audio src={staticFile('sfx/counter.wav')} volume={SFX * 0.8} />
       </Sequence>
+      {/* платёж отправлен: нажатие на «К оплате» */}
+      <Sequence from={T.tapPay} durationInFrames={40}>
+        <Audio src={staticFile('sfx/transform.wav')} volume={SFX} />
+      </Sequence>
+      {/* «оплачено»: галочка — тёплый аккорд с блеском */}
       <Sequence from={T.outroAt} durationInFrames={DURATION - T.outroAt}>
-        <Audio src={staticFile('sfx/pop-warm.wav')} volume={SFX} />
+        <Audio src={staticFile('sfx/pop-warm.wav')} volume={1} />
+      </Sequence>
+      <Sequence from={T.outroAt + 6} durationInFrames={DURATION - T.outroAt - 6}>
+        <Audio src={staticFile('sfx/shimmer.wav')} volume={0.8} />
       </Sequence>
     </AbsoluteFill>
   );
