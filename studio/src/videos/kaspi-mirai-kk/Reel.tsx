@@ -219,12 +219,12 @@ export const Reel: React.FC = () => {
       <Sequence from={T.tapPay} durationInFrames={40}>
         <Audio src={staticFile('sfx/transform.wav')} volume={SFX} />
       </Sequence>
-      {/* «оплачено»: галочка — тёплый аккорд с блеском */}
+      {/* «оплачено»: галочка — тёплый аккорд с блеском, самый громкий момент ролика */}
       <Sequence from={T.outroAt} durationInFrames={DURATION - T.outroAt}>
-        <Audio src={staticFile('sfx/pop-warm.wav')} volume={1} />
+        <Audio src={staticFile('sfx/pop-warm.wav')} volume={2.6} />
       </Sequence>
       <Sequence from={T.outroAt + 6} durationInFrames={DURATION - T.outroAt - 6}>
-        <Audio src={staticFile('sfx/shimmer.wav')} volume={0.8} />
+        <Audio src={staticFile('sfx/shimmer.wav')} volume={2} />
       </Sequence>
     </AbsoluteFill>
   );
